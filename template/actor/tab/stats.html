@@ -12,6 +12,12 @@
             <button type="button" class="incr rm-right-border">+</button>
           </div>
         </div>
+        <div class="fake-input show-adv">{{attribute.freemod}}
+          <div class="adv-buttons" title="{{attribute.tooltip}}" data-type="attribute-{{key}}-freemod" style="display:none;">
+            <button type="button" class="decr rm-left-border">-</button>
+            <button type="button" class="incr rm-right-border">+</button>
+          </div>
+        </div>
       </div>
       {{/each}}
     </div>
@@ -24,12 +30,13 @@
         {{#if skill.isLeft}}
         <div class="skill">
           <label class="roll-skill hover" data-skill="{{key}}"><span></span> {{localize skill.label}} <span>({{localize (configLookup "attributeAbbrev" skill.attribute)}})</span></label>
-          <div class="fake-input show-adv">{{skill.total}}
+          <div class="fake-input show-adv">{{skill.rating}}
             <div class="adv-buttons" title="{{skill.tooltip}}" data-type="skill-{{key}}" style="display:none;">
               <button type="button" class="decr rm-left-border rm-bottom-border">-</button>
               <button type="button" class="incr rm-right-border rm-bottom-border">+</button>
             </div>
           </div>
+          <div class="fake-input">{{skill.total}}</div>
         </div>
         {{/if}}
         {{/each}}
@@ -39,12 +46,13 @@
         {{#if skill.isRight}}
         <div class="skill">
           <label class="roll-skill hover" data-skill="{{key}}"><span></span> {{localize skill.label}} <span>({{localize (configLookup "attributeAbbrev" skill.attribute)}})</span></label>
-          <div class="fake-input show-adv">{{skill.total}}
+          <div class="fake-input show-adv">{{skill.rating}}
             <div class="adv-buttons" title="{{skill.tooltip}}" data-type="skill-{{key}}" style="display:none;">
               <button type="button" class="decr rm-left-border rm-bottom-border">-</button>
               <button type="button" class="incr rm-right-border rm-bottom-border">+</button>
             </div>
           </div>
+          <div class="fake-input">{{skill.total}}</div>
         </div>
         {{/if}}
         {{/each}}

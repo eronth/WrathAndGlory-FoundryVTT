@@ -64,11 +64,21 @@ export class WrathAndGloryActor extends Actor {
     }
 
     _computeItems() {
+        this.combat.defense.shield = 0;
         this.combat.resilience.armor = 0;
+        this.combat.resilience.shield = 0;
+
         for (let item of this.items) {
             item.prepareOwnedData()
             if (item.isArmour) {
                 this._computeArmour(item);
+            }
+            if (item.traits) {
+                for (let trait of item.traits) {
+                    if (trait["name"] == "bulk") {
+                        // bulk logic for speed reasons.           
+                    }
+                }
             }
             if (this.advances && item.cost) {
                 this.experience.spent = this.experience.spent + item.cost;
@@ -77,14 +87,30 @@ export class WrathAndGloryActor extends Actor {
     }
 
     _computeArmour(item) {
-        if (this.combat.resilience.armor < item.rating) {
+        if (!item.equipped)
+            return;
+
+        // Determine if item is a shield.
+        var isShield = false;
+        for (let trait of item.traits) {
+            if (trait["name"] == "shield")
+            isShield = true;
+        }
+
+        // If item is a shield, add it to the shield resilience.
+        if (isShield) {
+            this.combat.defense.shield += (item.rating * item.quantity);
+            this.combat.resilience.shield += (item.rating * item.quantity);
+        }
+        // if item is not shield, compare to existing armor.
+        else if (this.combat.resilience.armor < item.rating) {
             this.combat.resilience.armor = item.rating;
         }
     }
 
     _computeAttributes() {
         for (let attribute of Object.values(this.attributes)) {
-            attribute.total = attribute.rating + attribute.bonus;
+            attribute.total = attribute.freemod + attribute.rating + attribute.bonus;
             attribute.cost = game.wng.utility.getAttributeCostTotal(attribute.rating);
             if (this.advances) {
                 this.experience.spent = this.experience.spent + attribute.cost;
@@ -108,13 +134,13 @@ export class WrathAndGloryActor extends Actor {
         if (autoCalc.awareness)
             this.combat.passiveAwareness.total = this._setDefault(Math.ceil(this.skills.awareness.total / 2) + this.combat.passiveAwareness.bonus, 1);
         if (autoCalc.defense)
-            this.combat.defense.total = this._setDefault(this.attributes.initiative.total - 1 + this.combat.defense.bonus, 1);
+            this.combat.defense.total = this._setDefault(this.attributes.initiative.total - 1 + this.combat.defense.bonus + this.combat.defense.shield, 1);
         if (autoCalc.resolve)
             this.combat.resolve.total = this._setDefault(this.attributes.willpower.total - 1 + this.combat.resolve.bonus, 1);
         if (autoCalc.conviction)
             this.combat.conviction.total = this._setDefault(this.attributes.willpower.total + this.combat.conviction.bonus, 1);
         if (autoCalc.resilience)
-            this.combat.resilience.total = this._setDefault(this.attributes.toughness.total + 1 + this.combat.resilience.bonus + this.combat.resilience.armor, 1);
+            this.combat.resilience.total = this._setDefault(this.attributes.toughness.total + 1 + this.combat.resilience.bonus + this.combat.resilience.armor + this.combat.resilience.shield, 1);
         if (autoCalc.wounds && this.type == "agent")
             this.combat.wounds.max = this._setDefault((this.advances.tier * 2) + this.attributes.toughness.total + this.combat.wounds.bonus, 1);
         if (autoCalc.determination)

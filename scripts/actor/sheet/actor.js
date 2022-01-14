@@ -630,7 +630,7 @@ export class WrathAndGloryActorSheet extends ActorSheet {
         else if (event.currentTarget.classList.contains("decr")) amt = -1
 
         let type = $(event.currentTarget).parents(".adv-buttons").attr("data-type").split("-")
-        let target = `data.${type[0]}s.${type[1]}.rating` // Only slightly disgusting
+        let target = `data.${type[0]}s.${type[1]}.${(type.length > 2) ? type[2] : 'rating'}` // Only slightly disgusting
 
         this.actor.update({[`${target}`] : getProperty(this.actor.data._source, target) + amt})
     }
